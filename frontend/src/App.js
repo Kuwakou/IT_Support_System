@@ -4,7 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import Tasks from './pages/Tasks';
+import Tickets from './pages/Tickets';
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
+        <Route path="/tickets" element={<ProtectedRoute><Tickets /></ProtectedRoute>} />
       </Routes>
     </Router>
   );
