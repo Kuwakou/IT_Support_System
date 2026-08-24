@@ -5,17 +5,23 @@ import axiosInstance from '../axiosConfig';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSubmitting(true);
     try {
       const response = await axiosInstance.post('/api/auth/login', formData);
       login(response.data);
-      navigate('/tasks');
-    } catch (error) {
-      alert('Login failed. Please try again.');
+      navigate(response.data.role === 'agent' ? '/queue' : '/tickets');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -23,6 +29,11 @@ const Login = () => {
     <div className="max-w-md mx-auto mt-20">
       <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
         <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
+
+        {error && (
+          <div className="mb-4 p-2 rounded bg-red-100 text-red-700 text-sm">{error}</div>
+        )}
+
         <input
           type="email"
           placeholder="Email"
@@ -37,8 +48,12 @@ const Login = () => {
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
-          Login
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
+        >
+          {submitting ? 'Logging in...' : 'Login'}
         </button>
       </form>
     </div>
