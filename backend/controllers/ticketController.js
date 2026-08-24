@@ -10,8 +10,12 @@ const getTickets = async (req, res) => {
       const filter = {};
       if (req.query.status) filter.status = req.query.status;
       if (req.query.priority) filter.priority = req.query.priority;
-      if (req.query.assignedTo) filter.assignedTo = req.query.assignedTo;
-      const tickets = await Ticket.find(filter);
+      if (req.query.assignedTo === 'unassigned') {
+        filter.assignedTo = null;
+      } else if (req.query.assignedTo) {
+        filter.assignedTo = req.query.assignedTo;
+      }
+      const tickets = await Ticket.find(filter).populate('createdBy', 'name email');
       return res.json(tickets);
     }
     const tickets = await Ticket.find({ createdBy: req.user.id });
