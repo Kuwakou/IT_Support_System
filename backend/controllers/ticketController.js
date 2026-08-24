@@ -57,6 +57,10 @@ const updateTicket = async (req, res) => {
     const originalStatus = ticket.status;
 
     if (req.user.role === 'agent') {
+      if (title !== undefined || description !== undefined || category !== undefined || priority !== undefined) {
+        return res.status(403).json({ message: 'Agents cannot edit ticket content' });
+      }
+
       if (assignedTo !== undefined) {
         if (assignedTo !== req.user.id) {
           return res.status(403).json({ message: 'Agents can only assign tickets to themselves' });
