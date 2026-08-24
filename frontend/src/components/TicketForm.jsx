@@ -1,13 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axiosInstance from '../axiosConfig';
 
 const CATEGORIES = ['Hardware', 'Software', 'Network', 'Account', 'Other'];
 const PRIORITIES = ['Low', 'Medium', 'High'];
 
-const TicketForm = ({ onCreated }) => {
+const TicketForm = ({ onCreated, editingTicket, onUpdated, onCancelEdit }) => {
   const [formData, setFormData] = useState({ title: '', description: '', category: '', priority: 'Medium' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (editingTicket) {
+      setFormData({
+        title: editingTicket.title,
+        description: editingTicket.description || '',
+        category: editingTicket.category,
+        priority: editingTicket.priority,
+      });
+    }
+  }, [editingTicket]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,11 +31,16 @@ const TicketForm = ({ onCreated }) => {
 
     setSubmitting(true);
     try {
-      const response = await axiosInstance.post('/api/tickets', formData);
-      onCreated(response.data);
-      setFormData({ title: '', description: '', category: '', priority: 'Medium' });
+      if (editingTicket) {
+        const response = await axiosInstance.put(`/api/tickets/${editingTicket._id}`, formData);
+        onUpdated(response.data);
+      } else {
+        const response = await axiosInstance.post('/api/tickets', formData);
+        onCreated(response.data);
+        setFormData({ title: '', description: '', category: '', priority: 'Medium' });
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create ticket.');
+      setError(err.response?.data?.message || 'Failed to save ticket.');
     } finally {
       setSubmitting(false);
     }
@@ -32,7 +48,7 @@ const TicketForm = ({ onCreated }) => {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded mb-6">
-      <h1 className="text-2xl font-bold mb-4">Submit a Ticket</h1>
+      <h1 className="text-2xl font-bold mb-4">{editingTicket ? 'Edit Ticket' : 'Submit a Ticket'}</h1>
 
       {error && (
         <div className="mb-4 p-2 rounded bg-red-100 text-red-700 text-sm">{error}</div>
@@ -75,8 +91,17 @@ const TicketForm = ({ onCreated }) => {
         disabled={submitting}
         className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
       >
-        {submitting ? 'Submitting...' : 'Submit Ticket'}
+        {submitting ? 'Saving...' : editingTicket ? 'Update Ticket' : 'Submit Ticket'}
       </button>
+      {editingTicket && (
+        <button
+          type="button"
+          onClick={onCancelEdit}
+          className="w-full mt-2 bg-gray-200 text-gray-800 p-2 rounded"
+        >
+          Cancel
+        </button>
+      )}
     </form>
   );
 };
