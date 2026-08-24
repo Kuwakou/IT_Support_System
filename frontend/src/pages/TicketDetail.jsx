@@ -11,6 +11,12 @@ const STATUS_STYLES = {
   Closed: 'bg-gray-200 text-gray-700',
 };
 
+const NEXT_STATUS = {
+  Open: 'In Progress',
+  'In Progress': 'Resolved',
+  Resolved: 'Closed',
+};
+
 const TicketDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,6 +29,9 @@ const TicketDetail = () => {
   const [commentError, setCommentError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [statusNote, setStatusNote] = useState('');
+  const [statusError, setStatusError] = useState('');
+  const [changingStatus, setChangingStatus] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -87,6 +96,23 @@ const TicketDetail = () => {
       setTicket(response.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to assign ticket.');
+    }
+  };
+
+  const handleStatusChange = async (nextStatus) => {
+    setStatusError('');
+    setChangingStatus(true);
+    try {
+      const response = await axiosInstance.put(`/api/tickets/${id}`, {
+        status: nextStatus,
+        resolutionNote: statusNote,
+      });
+      setTicket(response.data);
+      setStatusNote('');
+    } catch (err) {
+      setStatusError(err.response?.data?.message || 'Failed to update status.');
+    } finally {
+      setChangingStatus(false);
     }
   };
 
@@ -157,6 +183,28 @@ const TicketDetail = () => {
             >
               Assign to Me
             </button>
+          )}
+          {user?.role === 'agent' && NEXT_STATUS[ticket.status] && (
+            <div className="mt-4">
+              {statusError && (
+                <div className="mb-2 p-2 rounded bg-red-100 text-red-700 text-sm">{statusError}</div>
+              )}
+              {(NEXT_STATUS[ticket.status] === 'Resolved' || NEXT_STATUS[ticket.status] === 'Closed') && (
+                <textarea
+                  placeholder="Resolution note (required to resolve/close)"
+                  value={statusNote}
+                  onChange={(e) => setStatusNote(e.target.value)}
+                  className="w-full mb-2 p-2 border rounded"
+                />
+              )}
+              <button
+                onClick={() => handleStatusChange(NEXT_STATUS[ticket.status])}
+                disabled={changingStatus}
+                className="bg-purple-600 text-white px-4 py-2 rounded text-sm disabled:opacity-50"
+              >
+                {changingStatus ? 'Updating...' : `Move to ${NEXT_STATUS[ticket.status]}`}
+              </button>
+            </div>
           )}
           {user?.role !== 'agent' && ticket.createdBy === user?.id && ticket.status === 'Open' && (
             <div className="mt-4 flex gap-2">
