@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../axiosConfig';
+import { useAuth } from '../context/AuthContext';
 
 const STATUS_STYLES = {
   Open: 'bg-blue-100 text-blue-800',
@@ -13,6 +14,7 @@ const STATUSES = ['Open', 'In Progress', 'Resolved', 'Closed'];
 const PRIORITIES = ['Low', 'Medium', 'High'];
 
 const TicketQueue = () => {
+  const { user } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -38,6 +40,18 @@ const TicketQueue = () => {
   useEffect(() => {
     fetchQueue();
   }, [fetchQueue]);
+
+  const handleAssignToMe = async (e, ticketId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setError('');
+    try {
+      await axiosInstance.put(`/api/tickets/${ticketId}`, { assignedTo: user.id });
+      fetchQueue();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to assign ticket.');
+    }
+  };
 
   return (
     <div className="container mx-auto p-6">
@@ -99,13 +113,23 @@ const TicketQueue = () => {
                   Created {new Date(ticket.createdAt).toLocaleString()}
                 </p>
               </div>
-              <span
-                className={`text-xs font-semibold px-2 py-1 rounded whitespace-nowrap ${
-                  STATUS_STYLES[ticket.status] || 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                {ticket.status}
-              </span>
+              <div className="flex flex-col items-end gap-2">
+                <span
+                  className={`text-xs font-semibold px-2 py-1 rounded whitespace-nowrap ${
+                    STATUS_STYLES[ticket.status] || 'bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  {ticket.status}
+                </span>
+                {!ticket.assignedTo && (
+                  <button
+                    onClick={(e) => handleAssignToMe(e, ticket._id)}
+                    className="text-xs bg-blue-600 text-white px-2 py-1 rounded whitespace-nowrap"
+                  >
+                    Assign to Me
+                  </button>
+                )}
+              </div>
             </Link>
           ))}
         </div>

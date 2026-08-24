@@ -70,7 +70,14 @@ const updateTicket = async (req, res) => {
         if (assignedTo !== req.user.id) {
           return res.status(403).json({ message: 'Agents can only assign tickets to themselves' });
         }
+        if (ticket.assignedTo && !ticket.assignedTo.equals(req.user.id)) {
+          return res.status(409).json({ message: 'Ticket is already assigned to another agent' });
+        }
+        const wasUnassigned = !ticket.assignedTo;
         ticket.assignedTo = req.user.id;
+        if (wasUnassigned && status === undefined && ticket.status === 'Open') {
+          ticket.status = 'In Progress';
+        }
       }
 
       if (status !== undefined && status !== originalStatus) {

@@ -80,6 +80,16 @@ const TicketDetail = () => {
     }
   };
 
+  const handleAssignToMe = async () => {
+    setError('');
+    try {
+      const response = await axiosInstance.put(`/api/tickets/${id}`, { assignedTo: user.id });
+      setTicket(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to assign ticket.');
+    }
+  };
+
   const handleDeleteComment = async (commentId) => {
     try {
       await axiosInstance.delete(`/api/comments/${commentId}`);
@@ -139,6 +149,14 @@ const TicketDetail = () => {
           </p>
           {ticket.resolutionNote && (
             <p className="text-sm text-gray-600 mt-2 italic">Resolution note: {ticket.resolutionNote}</p>
+          )}
+          {user?.role === 'agent' && !ticket.assignedTo && (
+            <button
+              onClick={handleAssignToMe}
+              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded text-sm"
+            >
+              Assign to Me
+            </button>
           )}
           {user?.role !== 'agent' && ticket.createdBy === user?.id && ticket.status === 'Open' && (
             <div className="mt-4 flex gap-2">
