@@ -13,6 +13,9 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/tickets', require('./routes/ticketRoutes'));
+const { nestedRouter: commentRoutes, flatRouter: commentDeleteRoutes } = require('./routes/commentRoutes');
+app.use('/api/tickets/:ticketId/comments', commentRoutes);
+app.use('/api/comments', commentDeleteRoutes);
 
 // Export the app object for testing
 if (require.main === module) {
