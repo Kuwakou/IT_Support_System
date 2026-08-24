@@ -1,4 +1,5 @@
 const Ticket = require('../models/Ticket');
+const Comment = require('../models/Comment');
 
 const STATUS_ORDER = ['Open', 'In Progress', 'Resolved', 'Closed'];
 const VALID_CATEGORIES = ['Hardware', 'Software', 'Network', 'Account', 'Other'];
@@ -130,6 +131,10 @@ const deleteTicket = async (req, res) => {
     if (!ticket.createdBy.equals(req.user.id)) {
       return res.status(403).json({ message: 'Not authorized to delete this ticket' });
     }
+    if (ticket.status !== 'Open' || ticket.assignedTo) {
+      return res.status(403).json({ message: 'Ticket can only be deleted while Open and unassigned' });
+    }
+    await Comment.deleteMany({ ticket: ticket._id });
     await ticket.deleteOne();
     res.json({ message: 'Ticket deleted' });
   } catch (error) {
