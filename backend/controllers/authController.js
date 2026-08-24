@@ -8,10 +8,21 @@ const generateToken = (id) => {
 };
 
 const VALID_ROLES = ['user', 'agent'];
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
     try {
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'Name, email and password are required' });
+        }
+        if (!EMAIL_REGEX.test(email)) {
+            return res.status(400).json({ message: 'Please provide a valid email address' });
+        }
+        if (password.length < 8) {
+            return res.status(400).json({ message: 'Password must be at least 8 characters' });
+        }
+
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists' });
 
