@@ -1,6 +1,7 @@
 const Ticket = require('../models/Ticket');
 
 const STATUS_ORDER = ['Open', 'In Progress', 'Resolved', 'Closed'];
+const VALID_CATEGORIES = ['Hardware', 'Software', 'Network', 'Account', 'Other'];
 
 const getTickets = async (req, res) => {
   try {
@@ -20,9 +21,15 @@ const getTickets = async (req, res) => {
 };
 
 const addTicket = async (req, res) => {
-  const { title, description, priority } = req.body;
+  const { title, description, category, priority } = req.body;
   try {
-    const ticket = await Ticket.create({ createdBy: req.user.id, title, description, priority });
+    if (!title || !category) {
+      return res.status(400).json({ message: 'Title and category are required' });
+    }
+    if (!VALID_CATEGORIES.includes(category)) {
+      return res.status(400).json({ message: `Category must be one of: ${VALID_CATEGORIES.join(', ')}` });
+    }
+    const ticket = await Ticket.create({ createdBy: req.user.id, title, description, category, priority });
     res.status(201).json(ticket);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -30,7 +37,7 @@ const addTicket = async (req, res) => {
 };
 
 const updateTicket = async (req, res) => {
-  const { title, description, priority, status, assignedTo, resolutionNote } = req.body;
+  const { title, description, category, priority, status, assignedTo, resolutionNote } = req.body;
   try {
     const ticket = await Ticket.findById(req.params.id);
     if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
@@ -75,12 +82,16 @@ const updateTicket = async (req, res) => {
         ticket.status = 'Open';
       }
 
-      if (title !== undefined || description !== undefined || priority !== undefined) {
+      if (title !== undefined || description !== undefined || category !== undefined || priority !== undefined) {
         if (originalStatus !== 'Open') {
           return res.status(403).json({ message: 'Ticket can only be edited while Open' });
         }
+        if (category !== undefined && !VALID_CATEGORIES.includes(category)) {
+          return res.status(400).json({ message: `Category must be one of: ${VALID_CATEGORIES.join(', ')}` });
+        }
         ticket.title = title || ticket.title;
         ticket.description = description || ticket.description;
+        ticket.category = category || ticket.category;
         ticket.priority = priority || ticket.priority;
       }
     }
