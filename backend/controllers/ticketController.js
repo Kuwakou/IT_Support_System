@@ -20,6 +20,19 @@ const getTickets = async (req, res) => {
   }
 };
 
+const getTicket = async (req, res) => {
+  try {
+    const ticket = await Ticket.findById(req.params.id);
+    if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
+    if (req.user.role !== 'agent' && !ticket.createdBy.equals(req.user.id)) {
+      return res.status(403).json({ message: 'Not authorized to view this ticket' });
+    }
+    res.json(ticket);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const addTicket = async (req, res) => {
   const { title, description, category, priority } = req.body;
   try {
@@ -120,4 +133,4 @@ const deleteTicket = async (req, res) => {
   }
 };
 
-module.exports = { getTickets, addTicket, updateTicket, deleteTicket };
+module.exports = { getTickets, getTicket, addTicket, updateTicket, deleteTicket };
