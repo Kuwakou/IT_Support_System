@@ -79,8 +79,6 @@ Create a `.env` file in `backend/` (see [Environment Variables](#environment-var
 npm start
 ```
 
-The API runs on `http://localhost:5001` by default.
-
 ### Frontend
 
 ```bash
