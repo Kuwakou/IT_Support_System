@@ -116,6 +116,16 @@ const TicketDetail = () => {
     }
   };
 
+  const handleReopen = async () => {
+    setError('');
+    try {
+      const response = await axiosInstance.put(`/api/tickets/${id}`, { status: 'Open' });
+      setTicket(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to reopen ticket.');
+    }
+  };
+
   const handleDeleteComment = async (commentId) => {
     try {
       await axiosInstance.delete(`/api/comments/${commentId}`);
@@ -223,6 +233,14 @@ const TicketDetail = () => {
                 </button>
               )}
             </div>
+          )}
+          {user?.role !== 'agent' && ticket.createdBy === user?.id && ticket.status === 'Resolved' && (
+            <button
+              onClick={handleReopen}
+              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded text-sm"
+            >
+              Reopen Ticket
+            </button>
           )}
         </div>
       )}
