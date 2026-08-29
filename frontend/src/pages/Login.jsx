@@ -15,6 +15,7 @@ const Login = () => {
     setError('');
     setSubmitting(true);
     try {
+      // Use the axiosInstance to make the POST request to the backend
       const response = await axiosInstance.post('/api/auth/login', formData);
       login(response.data);
       navigate(response.data.role === 'agent' ? '/queue' : '/tickets');

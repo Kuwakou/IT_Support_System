@@ -73,7 +73,7 @@ cd backend
 npm install
 ```
 
-Create a `.env` file in `backend/` (see [Environment Variables](#environment-variables) below — this file is gitignored and must never be committed).
+Create a `.env` file in `backend/` (— this file is gitignored and must never be committed).
 
 ```bash
 npm start

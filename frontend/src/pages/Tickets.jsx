@@ -16,6 +16,7 @@ const Tickets = () => {
       setLoading(true);
       setError('');
       try {
+        // Use the axiosInstance to make the GET request to the backend
         const response = await axiosInstance.get('/api/tickets');
         setTickets(response.data);
       } catch (err) {

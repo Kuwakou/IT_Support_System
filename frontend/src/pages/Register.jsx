@@ -35,6 +35,7 @@ const Register = () => {
 
     setSubmitting(true);
     try {
+      // Use the axiosInstance to make the POST request to the backend
       await axiosInstance.post('/api/auth/register', formData);
       setSuccess('Registration successful. Redirecting to login...');
       setTimeout(() => navigate('/login'), 1000);

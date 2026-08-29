@@ -39,6 +39,7 @@ const TicketDetail = () => {
       setError('');
       try {
         const [ticketRes, commentsRes] = await Promise.all([
+          // Use the axiosInstance to make the GET requests to the backend for ticket details and comments
           axiosInstance.get(`/api/tickets/${id}`),
           axiosInstance.get(`/api/tickets/${id}/comments`),
         ]);
@@ -69,6 +70,7 @@ const TicketDetail = () => {
 
     setSubmitting(true);
     try {
+      //  Use the axiosInstance to make the POST request to add a new comment to the ticket
       const response = await axiosInstance.post(`/api/tickets/${id}/comments`, { body: commentBody });
       setComments([...comments, response.data]);
       setCommentBody('');
@@ -82,6 +84,7 @@ const TicketDetail = () => {
   const handleDeleteTicket = async () => {
     if (!window.confirm('Delete this ticket? This cannot be undone.')) return;
     try {
+      // Use the axiosInstance to make the DELETE request to delete the ticket
       await axiosInstance.delete(`/api/tickets/${id}`);
       navigate('/tickets', { state: { toast: 'Ticket deleted' } });
     } catch (err) {
@@ -92,6 +95,7 @@ const TicketDetail = () => {
   const handleAssignToMe = async () => {
     setError('');
     try {
+      //  Use the axiosInstance to make the PUT request to assign the ticket to the current user
       const response = await axiosInstance.put(`/api/tickets/${id}`, { assignedTo: user.id });
       setTicket(response.data);
     } catch (err) {
@@ -103,6 +107,7 @@ const TicketDetail = () => {
     setStatusError('');
     setChangingStatus(true);
     try {
+      // Use the axiosInstance to make the PUT request to update the ticket status
       const response = await axiosInstance.put(`/api/tickets/${id}`, {
         status: nextStatus,
         resolutionNote: statusNote,
@@ -119,6 +124,7 @@ const TicketDetail = () => {
   const handleReopen = async () => {
     setError('');
     try {
+      // Use the axiosInstance to make the PUT request to reopen the ticket
       const response = await axiosInstance.put(`/api/tickets/${id}`, { status: 'Open' });
       setTicket(response.data);
     } catch (err) {
@@ -128,6 +134,7 @@ const TicketDetail = () => {
 
   const handleDeleteComment = async (commentId) => {
     try {
+      // Use the axiosInstance to make the DELETE request to delete the comment
       await axiosInstance.delete(`/api/comments/${commentId}`);
       setComments(comments.filter((c) => c._id !== commentId));
     } catch (err) {

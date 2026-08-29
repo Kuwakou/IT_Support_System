@@ -28,6 +28,7 @@ const TicketQueue = () => {
       if (filters.status) params.status = filters.status;
       if (filters.priority) params.priority = filters.priority;
       if (filters.assignedTo) params.assignedTo = filters.assignedTo;
+      // Use the axiosInstance to make the GET request to the backend with query parameters
       const response = await axiosInstance.get('/api/tickets', { params });
       setTickets(response.data);
     } catch (err) {
@@ -46,6 +47,7 @@ const TicketQueue = () => {
     e.stopPropagation();
     setError('');
     try {
+      // Use the axiosInstance to make the PUT request to assign the ticket to the current user
       await axiosInstance.put(`/api/tickets/${ticketId}`, { assignedTo: user.id });
       fetchQueue();
     } catch (err) {
