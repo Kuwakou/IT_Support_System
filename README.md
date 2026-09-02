@@ -92,7 +92,11 @@ The app runs on `http://localhost:3000` and expects the backend at the URL confi
 
 ## Deployment
 
-Deployment to an EC2 instance is in progress. The app currently runs locally only (see Setup above). `frontend/src/axiosConfig.jsx` has a commented-out `baseURL` line for pointing the frontend at a deployed backend once that's live.
+The application is prepared for EC2 deployment. However, because the target EC2 instance does not use a static Elastic IP, its public IP changes frequently.
+
+To handle this without breaking the connection:
+- Frontend Configuration: The API base URL in frontend/src/axiosConfig.jsx must be updated with the latest EC2 public IP address.
+- Automation: An automated script or nightly cron job should be used to fetch the active EC2 IP via the AWS CLI and update the baseURL line in axiosConfig.jsx prior to building the frontend.
 
 ## Known Limitations
 
