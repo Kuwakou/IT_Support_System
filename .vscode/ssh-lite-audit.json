@@ -1,0 +1,35 @@
+[
+  {
+    "action": "download",
+    "connectionId": "13.211.174.176:22:ubuntu",
+    "hostName": "IT_Support_System",
+    "username": "ubuntu",
+    "remotePath": "/home/ubuntu/taskmanagerv1/frontend/src/components/Navbar.jsx",
+    "localPath": "/var/folders/5r/hk77396577931fzbgvzbxzq00000gn/T/ssh-lite/6207e5fb/components_09723c2c/[ubuntu@13.211.174.176] Navbar.jsx",
+    "fileSize": 1155,
+    "success": true,
+    "timestamp": "2026-08-30T02:40:20.017Z"
+  },
+  {
+    "action": "download",
+    "connectionId": "13.211.174.176:22:ubuntu",
+    "hostName": "IT_Support_System",
+    "username": "ubuntu",
+    "remotePath": "/home/ubuntu/IT_Support_System/frontend/src/pages/Login.jsx",
+    "localPath": "/var/folders/5r/hk77396577931fzbgvzbxzq00000gn/T/ssh-lite/6207e5fb/pages_4b498f0f/[ubuntu@13.211.174.176] Login.jsx",
+    "fileSize": 2080,
+    "success": true,
+    "timestamp": "2026-08-30T02:43:46.874Z"
+  },
+  {
+    "action": "download",
+    "connectionId": "13.211.174.176:22:ubuntu",
+    "hostName": "IT_Support_System",
+    "username": "ubuntu",
+    "remotePath": "/home/ubuntu/IT_Support_System/backend/.env",
+    "localPath": "/var/folders/5r/hk77396577931fzbgvzbxzq00000gn/T/ssh-lite/6207e5fb/backend_fbbc7493/[ubuntu@13.211.174.176] .env",
+    "fileSize": 165,
+    "success": true,
+    "timestamp": "2026-08-30T02:44:23.510Z"
+  }
+]
