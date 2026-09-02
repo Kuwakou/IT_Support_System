@@ -42,5 +42,16 @@
     "fileSize": 602,
     "success": true,
     "timestamp": "2026-09-02T11:59:18.310Z"
+  },
+  {
+    "action": "download",
+    "connectionId": "3.104.54.86:22:ubuntu",
+    "hostName": "IT_Support_System",
+    "username": "ubuntu",
+    "remotePath": "/home/ubuntu/IT_Support_System/frontend/src/axiosConfig.jsx",
+    "localPath": "/var/folders/5r/hk77396577931fzbgvzbxzq00000gn/T/ssh-lite/9dfda95e/src_f7950520/[ubuntu@3.104.54.86] axiosConfig.jsx",
+    "fileSize": 601,
+    "success": true,
+    "timestamp": "2026-09-02T21:59:19.628Z"
   }
 ]
